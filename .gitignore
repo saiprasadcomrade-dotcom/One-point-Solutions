@@ -24,6 +24,7 @@ frontend.err.log
 booking1.json
 booking2.json
 *.bak
+.git-backup/
 
 # OS files
 .DS_Store
