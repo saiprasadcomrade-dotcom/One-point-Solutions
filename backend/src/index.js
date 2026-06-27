@@ -19,7 +19,37 @@ const {
 const app = express();
 const PORT = process.env.PORT || 5000;
 const dbPath = path.join(__dirname, '../../database/rental.db');
+const schemaPath = path.join(__dirname, '../../database/schema.sql');
+
+// Check if database needs initialization (if file size is 0 or doesn't exist)
+let needsInit = false;
+if (!fs.existsSync(dbPath) || fs.statSync(dbPath).size === 0) {
+  needsInit = true;
+}
+
 const db = new Database(dbPath);
+
+if (needsInit) {
+  console.log("Empty database detected. Initializing schema...");
+  db.pragma('foreign_keys = ON');
+  const schema = fs.readFileSync(schemaPath, 'utf8');
+  db.exec(schema);
+  
+  try {
+    db.prepare(`
+      INSERT INTO settings (id, company_name, company_logo, company_email, company_phone, company_address, company_website, company_support_email, company_whatsapp, admin_password)
+      VALUES (1, 'One Point Solutions', '', 'onepointsolutions16@gmail.com', '+91 98765 43210', '123 Tech Park, Bangalore, India', 'www.onepointsolutions.com', 'support@onepointsolutions.com', '+91 98765 43210', 'admin@123')
+    `).run();
+
+    db.prepare(`
+      INSERT INTO admins (name, email, password, googleId, avatarUrl)
+      VALUES ('One Point Solutions', 'onepointsolutions16@gmail.com', 'admin@123', NULL, NULL)
+    `).run();
+    console.log("Database schema and default admin initialized successfully!");
+  } catch (err) {
+    console.error("Error seeding default data:", err.message);
+  }
+}
 
 app.use(cors());
 app.use(express.json());
