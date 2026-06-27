@@ -7,18 +7,20 @@ services:
     startCommand: "cd backend && npm start"
     envVars:
       - key: NODE_ENV
-        value: production
+        value: "production"
       - key: PORT
-        value: 10000
+        value: "10000"
       - key: EMAIL_USER
         sync: false
       - key: EMAIL_PASS
         sync: false
       - key: SMTP_HOST
-        value: smtp.gmail.com
+        value: "smtp.gmail.com"
       - key: SMTP_PORT
-        value: 465
+        value: "465"
       - key: SMTP_SECURE
-        value: true
+        value: "true"
       - key: RESEND_API_KEY
         sync: false
+      - key: NODE_VERSION
+        value: "20"
