@@ -108,45 +108,38 @@ async function sendEmailWithRetry({ to, subject, htmlContent, customerName, type
   }
 
   let transporter;
+  let transporterError = null;
   try {
     transporter = getTransporter();
   } catch (err) {
-    const errMsg = err.message;
-    console.warn(`[SMTP Warning] ${errMsg}`);
-    logNotification({
-      customer_name: customerName,
-      phone: '',
-      email: to,
-      type,
-      channel: 'Email',
-      status: 'Not Configured',
-      message_preview: `[SMTP Credentials Missing/Invalid] ${subject}`
-    });
-    return { success: false, status: 'Not Configured', error: errMsg };
+    transporterError = err;
+    console.warn(`[SMTP Warning] ${err.message}`);
   }
 
   // --- Implement 1-Time Retry Logic (Step 10) ---
   const MAX_RETRIES = 1;
   let attempt = 0;
-  let lastVerifyErr = null;
+  let lastVerifyErr = transporterError;
 
-  while (attempt <= MAX_RETRIES) {
-    try {
-      console.log(`[SMTP Log] Attempt ${attempt + 1}: Verifying SMTP Connection...`);
-      await transporter.verify();
-      console.log('[SMTP Log] SMTP Connected successfully!');
-      lastVerifyErr = null;
-      break; // Success, exit retry loop
-    } catch (verifyErr) {
-      lastVerifyErr = verifyErr;
-      console.error(`[SMTP Log] Verification Attempt ${attempt + 1} Failed:`, verifyErr.message);
-      
-      if (attempt < MAX_RETRIES) {
-        console.log(`[SMTP Log] Falling back to Port 587 with STARTTLS in 2 seconds...`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        transporter = getTransporter(587, false, true);
+  if (transporter) {
+    while (attempt <= MAX_RETRIES) {
+      try {
+        console.log(`[SMTP Log] Attempt ${attempt + 1}: Verifying SMTP Connection...`);
+        await transporter.verify();
+        console.log('[SMTP Log] SMTP Connected successfully!');
+        lastVerifyErr = null;
+        break; // Success, exit retry loop
+      } catch (verifyErr) {
+        lastVerifyErr = verifyErr;
+        console.error(`[SMTP Log] Verification Attempt ${attempt + 1} Failed:`, verifyErr.message);
+        
+        if (attempt < MAX_RETRIES) {
+          console.log(`[SMTP Log] Falling back to Port 587 with STARTTLS in 2 seconds...`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          transporter = getTransporter(587, false, true);
+        }
+        attempt++;
       }
-      attempt++;
     }
   }
 

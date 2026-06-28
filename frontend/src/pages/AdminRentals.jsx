@@ -28,7 +28,7 @@ const AdminRentals = () => {
   const [showFormModal, setShowFormModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [showExtendModal, setShowExtendModal] = useState(false);
-  const [activeEmailError, setActiveEmailError] = useState(null); // { error, stack, to, type }
+
 
   // Active items for modals
   const [selectedRental, setSelectedRental] = useState(null);
@@ -200,12 +200,7 @@ const AdminRentals = () => {
       } else if (res.data.emailStatus === 'Failed' || res.data.emailStatus === 'Not Configured') {
         showToast('Email Notification Failed', 'error');
         const rentalObj = rentals.find(r => r.id === id);
-        setActiveEmailError({
-          to: rentalObj?.customer_email || 'customer@example.com',
-          error: res.data.emailError || 'Unknown Error',
-          stack: res.data.emailStack || '',
-          status: res.data.emailStatus
-        });
+        // setActiveEmailError removed as requested
       }
       fetchData();
     } catch (err) {
@@ -222,12 +217,7 @@ const AdminRentals = () => {
         showToast(`Email ${res.data.emailStatus}!`, 'success');
       } else if (res.data.emailStatus === 'Failed' || res.data.emailStatus === 'Not Configured') {
         showToast('Email Notification Failed', 'error');
-        setActiveEmailError({
-          to: selectedRental?.customer_email || 'customer@example.com',
-          error: res.data.emailError || 'Unknown Error',
-          stack: res.data.emailStack || '',
-          status: res.data.emailStatus
-        });
+        // setActiveEmailError removed as requested
       }
       setShowReturnModal(false);
       fetchData();
@@ -871,64 +861,6 @@ const AdminRentals = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* ─── SMTP DIAGNOSTIC DETAILS MODAL ─── */}
-      {activeEmailError && (
-        <div className="fixed inset-0 z-55 flex items-center justify-center px-4">
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setActiveEmailError(null)}></div>
-          <div className="bg-white border border-slate-250 rounded-[2rem] max-w-xl w-full p-6 sm:p-8 shadow-2xl relative flex flex-col justify-between max-h-[85vh]">
-            <button className="absolute top-5 right-5 text-slate-400 hover:text-slate-650 font-bold" onClick={() => setActiveEmailError(null)}>
-              <X size={20} />
-            </button>
-            <div className="overflow-y-auto pr-1">
-              <div className="flex items-center gap-2 text-rose-500 mb-3">
-                <AlertTriangle size={24} />
-                <h2 className="text-base font-black uppercase tracking-wider">SMTP Email Delivery Failure</h2>
-              </div>
-              <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                The action completed successfully, but the notification email to <strong className="text-slate-800">{activeEmailError.to}</strong> failed to send.
-              </p>
-              
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Detailed Diagnostics</h3>
-                
-                <div className="mb-2">
-                  <span className="text-xs font-bold text-slate-500 w-24 inline-block">Status:</span>
-                  <span className="text-xs font-mono text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">{activeEmailError.status}</span>
-                </div>
-                
-                <div className="mb-2">
-                  <span className="text-xs font-bold text-slate-500 w-24 inline-block align-top">Exact Error:</span>
-                  <span className="text-xs font-mono text-slate-700 inline-block w-[calc(100%-6rem)] break-words">{activeEmailError.error}</span>
-                </div>
-                
-                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-xs text-amber-800 font-bold mb-1">Suggested Fix:</p>
-                  <p className="text-xs text-amber-700 leading-relaxed">
-                    If you see a <strong>"Connection timeout"</strong> error, it means your local network ISP or Antivirus (e.g. McAfee/Avast) is physically blocking outgoing connections to Gmail on port 465/587. <br/><br/>
-                    <strong>To fix this:</strong> Connect your PC to a mobile hotspot or temporarily disable your Antivirus Firewall shield.
-                  </p>
-                </div>
-              </div>
-              
-              {activeEmailError.stack && (
-                <div className="bg-slate-950 rounded-xl p-3 mt-4 max-h-48 overflow-auto font-mono text-[10px] text-slate-300 leading-normal border border-slate-900 relative">
-                  <div className="absolute top-2 right-2 bg-slate-800 text-[8px] font-bold text-slate-400 px-1.5 py-0.5 rounded uppercase tracking-wider select-none">
-                    Stack Trace
-                  </div>
-                  <pre className="whitespace-pre-wrap mt-2 select-text">{activeEmailError.stack}</pre>
-                </div>
-              )}
-            </div>
-            <button
-              onClick={() => setActiveEmailError(null)}
-              className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer mt-5"
-            >
-              Acknowledge & Close
-            </button>
           </div>
         </div>
       )}
