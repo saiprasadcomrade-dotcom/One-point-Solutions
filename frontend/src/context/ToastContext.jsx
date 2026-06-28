@@ -27,7 +27,7 @@ export const ToastProvider = ({ children }) => {
       {children}
 
       {/* Toast Overlay Container */}
-      <div className="fixed top-24 right-6 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full">
+      <div className="fixed bottom-8 right-6 z-[9999] flex flex-col-reverse gap-3 pointer-events-none max-w-sm w-full">
         <AnimatePresence>
           {toasts.map((toast) => {
             let bgStyle = 'bg-slate-900 border-slate-800 text-slate-100';
@@ -51,9 +51,9 @@ export const ToastProvider = ({ children }) => {
             return (
               <motion.div
                 key={toast.id}
-                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => removeToast(toast.id)}
                 className={`pointer-events-auto flex items-start gap-3 p-4 rounded-2xl border backdrop-blur-md shadow-2xl ${bgStyle} cursor-pointer`}
