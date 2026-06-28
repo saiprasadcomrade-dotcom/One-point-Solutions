@@ -197,7 +197,9 @@ const AdminRentals = () => {
       showToast('Booking Confirmed', 'success');
       if (res.data.emailStatus?.startsWith('Sent')) {
         showToast(`Email ${res.data.emailStatus}!`, 'success');
-
+      } else {
+        showToast('Booking Confirmed (Email not sent)', 'warning');
+      }
       fetchData();
     } catch (err) {
       showToast('Failed to confirm booking.', 'error');
@@ -211,7 +213,9 @@ const AdminRentals = () => {
       showToast('Device Returned Successfully!', 'success');
       if (res.data.emailStatus?.startsWith('Sent')) {
         showToast(`Email ${res.data.emailStatus}!`, 'success');
-
+      } else {
+        showToast('Return Processed (Email not sent)', 'warning');
+      }
       setShowReturnModal(false);
       fetchData();
     } catch (err) {
@@ -260,7 +264,7 @@ const AdminRentals = () => {
     e.preventDefault();
     try {
       await api.post(`/rentals/${selectedRental.id}/extend`, extendForm);
-      showToast('Rental extended and notification sent.', 'success');
+      showToast('Rental extended successfully.', 'success');
       setShowExtendModal(false);
       fetchData();
     } catch (err) {
