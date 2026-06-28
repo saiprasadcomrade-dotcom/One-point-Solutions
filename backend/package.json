@@ -4,6 +4,7 @@
   "description": "Electronics Rental Booking System",
   "main": "index.js",
   "scripts": {
+    "prestart": "node seed_data.js",
     "start": "node src/index.js",
     "init-db": "node src/db-init.js",
     "seed-devices": "node src/seed-10-devices.js",
