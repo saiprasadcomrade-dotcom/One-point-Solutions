@@ -197,11 +197,7 @@ const AdminRentals = () => {
       showToast('Booking Confirmed', 'success');
       if (res.data.emailStatus?.startsWith('Sent')) {
         showToast(`Email ${res.data.emailStatus}!`, 'success');
-      } else if (res.data.emailStatus === 'Failed' || res.data.emailStatus === 'Not Configured') {
-        showToast('Email Notification Failed', 'error');
-        const rentalObj = rentals.find(r => r.id === id);
-        // setActiveEmailError removed as requested
-      }
+
       fetchData();
     } catch (err) {
       showToast('Failed to confirm booking.', 'error');
@@ -215,10 +211,7 @@ const AdminRentals = () => {
       showToast('Device Returned Successfully!', 'success');
       if (res.data.emailStatus?.startsWith('Sent')) {
         showToast(`Email ${res.data.emailStatus}!`, 'success');
-      } else if (res.data.emailStatus === 'Failed' || res.data.emailStatus === 'Not Configured') {
-        showToast('Email Notification Failed', 'error');
-        // setActiveEmailError removed as requested
-      }
+
       setShowReturnModal(false);
       fetchData();
     } catch (err) {
